@@ -1,0 +1,47 @@
+
+// package main
+
+// import (
+// 	"context"
+// 	"fmt"
+// 	"log"
+
+// 	"github.com/kaungmyathan22/golang-hotel-reservation/src/types"
+// 	"go.mongodb.org/mongo-driver/mongo"
+// 	"go.mongodb.org/mongo-driver/mongo/options"
+// )
+
+// var CNX = Connection()
+
+// func Connection() *mongo.Client {
+// 	// Set client options
+// 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+
+// 	// Connect to MongoDB
+// 	client, err := mongo.Connect(context.TODO(), clientOptions)
+
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	// Check the connection
+// 	err = client.Ping(context.TODO(), nil)
+
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	fmt.Println("Connected to MongoDB!")
+
+// 	return client
+// }
+
+// // calll connection
+// func main() {
+// 	coll := CNX.Database("tasks").Collection("task")
+// 	user := types.User{
+// 		FirstName: "Eric",
+// 		LastName:  "Han",
+// 	}
+// 	coll.InsertOne(context.Background(), user)
+// }
