@@ -22,6 +22,7 @@ const userCollection = "users"
 func main() {
 	var PORT = flag.String("port", ":5000", "Listen address of the api server")
 	flag.Parse()
+
 	app := fiber.New(fiber.Config{
 		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
 			code := fiber.StatusInternalServerError
@@ -38,6 +39,7 @@ func main() {
 			return nil
 		},
 	})
+
 	opts := options.Client().ApplyURI(uri)
 	client, err := mongo.Connect(context.TODO(), opts)
 	if err != nil {
@@ -54,9 +56,11 @@ func main() {
 	}
 
 	fmt.Println("Pinged your deployment. You successfully connected to MongoDB!")
-	apiv1 := app.Group("/api/v1")
+
 	mongoUserStore := db.NewMongoUserStore(client)
 	userHandler := api.NewUserHandler(mongoUserStore)
+
+	apiv1 := app.Group("/api/v1")
 	apiv1.Post("/user", userHandler.HandleCreateUsers)
 	apiv1.Get("/user", userHandler.HandleGetUsers)
 	apiv1.Get("/user/:id", userHandler.HandleGetUser)
