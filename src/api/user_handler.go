@@ -7,6 +7,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/kaungmyathan22/golang-hotel-reservation/src/db"
 	"github.com/kaungmyathan22/golang-hotel-reservation/src/types"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -71,4 +73,22 @@ func (h *UserHandler) HandleDeleteUsers(c *fiber.Ctx) error {
 		return err
 	}
 	return c.JSON(map[string]string{"message": "Successfully deleted user with " + userID})
+}
+
+func (h *UserHandler) HandleUpdateUser(c *fiber.Ctx) error {
+	userID := c.Params("id")
+	var payload bson.M
+	if err := c.BodyParser(&payload); err != nil {
+		return err
+	}
+	objectId, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return err
+	}
+	filter := bson.M{"_id": objectId}
+	err = h.userStore.UpdateUser(c.Context(), filter, payload)
+	if err != nil {
+		return err
+	}
+	return c.JSON(map[string]string{"message": "Successfully updated user. "})
 }

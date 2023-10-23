@@ -61,9 +61,13 @@ func main() {
 	userHandler := api.NewUserHandler(mongoUserStore)
 
 	apiv1 := app.Group("/api/v1")
-	apiv1.Post("/user", userHandler.HandleCreateUsers)
+
 	apiv1.Get("/user", userHandler.HandleGetUsers)
+	apiv1.Post("/user", userHandler.HandleCreateUsers)
+
 	apiv1.Get("/user/:id", userHandler.HandleGetUser)
+	apiv1.Patch("/user/:id", userHandler.HandleUpdateUser)
 	apiv1.Delete("/user/:id", userHandler.HandleDeleteUsers)
+
 	app.Listen(*PORT)
 }
