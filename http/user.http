@@ -1,0 +1,16 @@
+@URL=http://127.0.0.1:5000
+
+GET {{URL}}/api/v1/user HTTP/1.1
+
+###
+GET {{URL}}/api/v1/user/65361804240c9a0841e7760a HTTP/1.1
+###
+POST {{URL}}/api/v1/user
+Content-Type: application/json
+
+{
+    # "firstName":"Eric",
+    # "lastName":"Han",
+    # "email":"eric@gmail.com",
+    # "password":"test1322!@"
+}

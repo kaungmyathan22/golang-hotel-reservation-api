@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/kaungmyathan22/golang-hotel-reservation/src/db"
+	"github.com/kaungmyathan22/golang-hotel-reservation/src/types"
 )
 
 type UserHandler struct {
@@ -35,5 +36,21 @@ func (h *UserHandler) HandleGetUser(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) HandleCreateUsers(c *fiber.Ctx) error {
-	return c.JSON(map[string]string{"message": "Hola"})
+	var payload types.CreateUserPayload
+	if err := c.BodyParser(&payload); err != nil {
+		return err
+	}
+	if errors := payload.Validate(); len(errors) > 0 {
+		return c.JSON(errors)
+	}
+	parsedPayload, err := types.NewUserFromParams(payload)
+	if err != nil {
+		return err
+	}
+
+	user, err := h.userStore.CreateUser(c.Context(), parsedPayload)
+	if err != nil {
+		return err
+	}
+	return c.JSON(user)
 }

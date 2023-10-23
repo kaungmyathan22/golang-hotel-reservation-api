@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/kaungmyathan22/golang-hotel-reservation/src/types"
 	"go.mongodb.org/mongo-driver/bson"
@@ -15,6 +14,7 @@ const UserCollection = "users"
 type UserStore interface {
 	GetUserByID(ctx context.Context, id string) (*types.User, error)
 	GetUsers(ctx context.Context) ([]*types.User, error)
+	CreateUser(ctx context.Context, user *types.User) (*types.User, error)
 }
 
 type MongoUserStore struct {
@@ -27,6 +27,15 @@ func NewMongoUserStore(client *mongo.Client) *MongoUserStore {
 		client:     client,
 		collection: client.Database(DB_NAME).Collection(UserCollection),
 	}
+}
+
+func (s *MongoUserStore) CreateUser(ctx context.Context, user *types.User) (*types.User, error) {
+	result, err := s.collection.InsertOne(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+	user.ID = result.InsertedID.(primitive.ObjectID)
+	return user, nil
 }
 
 func (s *MongoUserStore) GetUserByID(ctx context.Context, id string) (*types.User, error) {
@@ -50,6 +59,5 @@ func (s *MongoUserStore) GetUsers(ctx context.Context) ([]*types.User, error) {
 	if err := cur.All(ctx, &users); err != nil {
 		return nil, err
 	}
-	fmt.Print(users)
 	return users, nil
 }
