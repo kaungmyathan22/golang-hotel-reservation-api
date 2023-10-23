@@ -3,7 +3,9 @@
 GET {{URL}}/api/v1/user HTTP/1.1
 
 ###
-GET {{URL}}/api/v1/user/65361804240c9a0841e7760a HTTP/1.1
+DELETE  {{URL}}/api/v1/user/65361824240c9a0841e7760b HTTP/1.1
+###
+GET {{URL}}/api/v1/user/65361824240c9a0841e7760b HTTP/1.1
 ###
 POST {{URL}}/api/v1/user
 Content-Type: application/json

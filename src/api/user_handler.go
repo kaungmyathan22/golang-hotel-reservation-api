@@ -1,11 +1,13 @@
 package api
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/kaungmyathan22/golang-hotel-reservation/src/db"
 	"github.com/kaungmyathan22/golang-hotel-reservation/src/types"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type UserHandler struct {
@@ -30,6 +32,9 @@ func (h *UserHandler) HandleGetUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 	user, err := h.userStore.GetUserByID(c.Context(), id)
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return fmt.Errorf("User with given id not found.")
+		}
 		return err
 	}
 	return c.JSON(user)
@@ -53,4 +58,17 @@ func (h *UserHandler) HandleCreateUsers(c *fiber.Ctx) error {
 		return err
 	}
 	return c.JSON(user)
+}
+
+func (h *UserHandler) HandleDeleteUsers(c *fiber.Ctx) error {
+	userID := c.Params("id")
+	err := h.userStore.DeleteUserByID(c.Context(), userID)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return fmt.Errorf("User with given id not found.")
+		}
+
+		return err
+	}
+	return c.JSON(map[string]string{"message": "Successfully deleted user with " + userID})
 }

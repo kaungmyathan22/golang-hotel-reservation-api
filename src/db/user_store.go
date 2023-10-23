@@ -15,6 +15,8 @@ type UserStore interface {
 	GetUserByID(ctx context.Context, id string) (*types.User, error)
 	GetUsers(ctx context.Context) ([]*types.User, error)
 	CreateUser(ctx context.Context, user *types.User) (*types.User, error)
+	DeleteUserByID(ctx context.Context, id string) error
+	// UpdateUser(ctx context.Context, user *types.User) (*types.User, error)
 }
 
 type MongoUserStore struct {
@@ -60,4 +62,16 @@ func (s *MongoUserStore) GetUsers(ctx context.Context) ([]*types.User, error) {
 		return nil, err
 	}
 	return users, nil
+}
+
+func (s *MongoUserStore) DeleteUserByID(ctx context.Context, id string) error {
+	var user types.User
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+	if err := s.collection.FindOneAndDelete(ctx, bson.M{"_id": objectId}).Decode(&user); err != nil {
+		return err
+	}
+	return nil
 }

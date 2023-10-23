@@ -64,5 +64,6 @@ func main() {
 	apiv1.Post("/user", userHandler.HandleCreateUsers)
 	apiv1.Get("/user", userHandler.HandleGetUsers)
 	apiv1.Get("/user/:id", userHandler.HandleGetUser)
+	apiv1.Delete("/user/:id", userHandler.HandleDeleteUsers)
 	app.Listen(*PORT)
 }
