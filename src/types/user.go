@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -37,6 +38,23 @@ func (payload CreateUserPayload) Validate() map[string]string {
 		errors["email"] = fmt.Sprintf("email is invalid.")
 	}
 	return errors
+}
+
+type UpdateUserPayload struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+}
+
+func (payload UpdateUserPayload) ToBSON() bson.M {
+	m := bson.M{}
+	fmt.Print(payload)
+	if len(payload.FirstName) > 0 {
+		m["firstName"] = payload.FirstName
+	}
+	if len(payload.LastName) > 0 {
+		m["lastName"] = payload.LastName
+	}
+	return m
 }
 
 func isEmailValid(email string) bool {

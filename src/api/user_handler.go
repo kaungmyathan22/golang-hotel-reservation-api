@@ -77,7 +77,8 @@ func (h *UserHandler) HandleDeleteUsers(c *fiber.Ctx) error {
 
 func (h *UserHandler) HandleUpdateUser(c *fiber.Ctx) error {
 	userID := c.Params("id")
-	var payload bson.M
+	// var payload bson.M
+	var payload types.UpdateUserPayload
 	if err := c.BodyParser(&payload); err != nil {
 		return err
 	}
