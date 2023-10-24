@@ -69,7 +69,6 @@ func (h *UserHandler) HandleDeleteUsers(c *fiber.Ctx) error {
 		if err == mongo.ErrNoDocuments {
 			return fmt.Errorf("User with given id not found.")
 		}
-
 		return err
 	}
 	return c.JSON(map[string]string{"message": "Successfully deleted user with " + userID})
