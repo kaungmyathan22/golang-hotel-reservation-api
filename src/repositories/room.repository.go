@@ -13,7 +13,7 @@ const RoomCollection = "room"
 
 type RoomStore interface {
 	GetRoomByID(ctx context.Context, id string) (*types.Room, error)
-	GetRooms(ctx context.Context) ([]*types.Room, error)
+	GetRooms(context.Context, bson.M) ([]*types.Room, error)
 	CreateRoom(ctx context.Context, Room *types.Room) (*types.Room, error)
 	DeleteRoomByID(ctx context.Context, id string) error
 	// UpdateRoom(context.Context, bson.M, types.UpdateRoomPayload) error
@@ -33,8 +33,8 @@ func NewMongoRoomStore(client *mongo.Client, hotelStore HotelStore) *MongoRoomSt
 	}
 }
 
-func (s *MongoRoomStore) GetRooms(ctx context.Context) ([]*types.Room, error) {
-	cur, err := s.collection.Find(ctx, bson.M{})
+func (s *MongoRoomStore) GetRooms(ctx context.Context, filter bson.M) ([]*types.Room, error) {
+	cur, err := s.collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}

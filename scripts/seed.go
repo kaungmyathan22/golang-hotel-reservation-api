@@ -31,6 +31,7 @@ func main() {
 		Name:     "Belluia",
 		Location: "France",
 		Rooms:    []primitive.ObjectID{},
+		Rating:   3,
 	}
 	rooms := []types.Room{
 		{

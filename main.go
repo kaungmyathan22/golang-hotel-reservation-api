@@ -60,14 +60,15 @@ func main() {
 	hotelHandler := api.NewHotelHandle(hotelStore, roomStore)
 
 	apiv1 := app.Group("/api/v1")
-
+	//#region ----- user routes
 	apiv1.Get("/user", userHandler.HandleGetUsers)
 	apiv1.Post("/user", userHandler.HandleCreateUsers)
-
 	apiv1.Get("/user/:id", userHandler.HandleGetUser)
 	apiv1.Patch("/user/:id", userHandler.HandleUpdateUser)
 	apiv1.Delete("/user/:id", userHandler.HandleDeleteUsers)
 
+	//#region ----- hotel routes
 	apiv1.Get("/hotel", hotelHandler.HandleGetHotels)
+	apiv1.Get("/hotel/:id/rooms", hotelHandler.HandleGetRooms)
 	app.Listen(*PORT)
 }
