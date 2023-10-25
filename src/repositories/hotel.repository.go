@@ -13,7 +13,7 @@ const HotelCollection = "hotel"
 
 type HotelStore interface {
 	GetHotelByID(ctx context.Context, id string) (*types.Hotel, error)
-	GetHotels(ctx context.Context) ([]*types.Hotel, error)
+	GetHotels(context.Context, bson.M) ([]*types.Hotel, error)
 	CreateHotel(ctx context.Context, Hotel *types.Hotel) (*types.Hotel, error)
 	DeleteHotelByID(ctx context.Context, id string) error
 	UpdateHotel(context.Context, bson.M, bson.M) error
@@ -31,8 +31,8 @@ func NewMongoHotelStore(client *mongo.Client) *MongoHotelStore {
 	}
 }
 
-func (s *MongoHotelStore) GetHotels(ctx context.Context) ([]*types.Hotel, error) {
-	cur, err := s.collection.Find(ctx, bson.M{})
+func (s *MongoHotelStore) GetHotels(ctx context.Context, filter bson.M) ([]*types.Hotel, error) {
+	cur, err := s.collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}

@@ -54,7 +54,10 @@ func main() {
 	fmt.Println("Pinged your deployment. You successfully connected to MongoDB!")
 
 	mongoUserStore := repository.NewMongoUserStore(client)
+	hotelStore := repository.NewMongoHotelStore(client)
+	roomStore := repository.NewMongoRoomStore(client, hotelStore)
 	userHandler := api.NewUserHandler(mongoUserStore)
+	hotelHandler := api.NewHotelHandle(hotelStore, roomStore)
 
 	apiv1 := app.Group("/api/v1")
 
@@ -65,5 +68,6 @@ func main() {
 	apiv1.Patch("/user/:id", userHandler.HandleUpdateUser)
 	apiv1.Delete("/user/:id", userHandler.HandleDeleteUsers)
 
+	apiv1.Get("/hotel", hotelHandler.HandleGetHotels)
 	app.Listen(*PORT)
 }
