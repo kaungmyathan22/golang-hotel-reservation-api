@@ -9,15 +9,11 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/kaungmyathan22/golang-hotel-reservation/src/api"
-	"github.com/kaungmyathan22/golang-hotel-reservation/src/db"
+	repository "github.com/kaungmyathan22/golang-hotel-reservation/src/repositories"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-const uri = "mongodb://localhost:27017"
-const dbName = "golang-hotel-reservation"
-const userCollection = "users"
 
 func main() {
 	var PORT = flag.String("port", ":5000", "Listen address of the api server")
@@ -40,7 +36,7 @@ func main() {
 		},
 	})
 
-	opts := options.Client().ApplyURI(uri)
+	opts := options.Client().ApplyURI(repository.DB_URI)
 	client, err := mongo.Connect(context.TODO(), opts)
 	if err != nil {
 		log.Fatal(err)
@@ -57,7 +53,7 @@ func main() {
 
 	fmt.Println("Pinged your deployment. You successfully connected to MongoDB!")
 
-	mongoUserStore := db.NewMongoUserStore(client)
+	mongoUserStore := repository.NewMongoUserStore(client)
 	userHandler := api.NewUserHandler(mongoUserStore)
 
 	apiv1 := app.Group("/api/v1")

@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/kaungmyathan22/golang-hotel-reservation/src/db"
+	db "github.com/kaungmyathan22/golang-hotel-reservation/src/repositories"
 	"github.com/kaungmyathan22/golang-hotel-reservation/src/types"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
