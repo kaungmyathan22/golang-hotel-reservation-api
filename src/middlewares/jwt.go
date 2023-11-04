@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -18,9 +19,16 @@ func JWTAuthentication(c *fiber.Ctx) error {
 	splitted_token := strings.Split(auth_headers[0],"Bearer ");
 
 	token := splitted_token[1]
-
-	if _, err := parseJWTToken(token); err != nil {
+	claims, err := parseJWTToken(token);
+	if  err != nil {
 		return err
+	}
+
+	fmt.Println(claims)
+	expiresFloat := claims["expires"].(float64)
+	expires := int64(expiresFloat)
+	if time.Now().Unix() > expires {
+		return fmt.Errorf("token expired")
 	}
 	return c.Next()
 }
