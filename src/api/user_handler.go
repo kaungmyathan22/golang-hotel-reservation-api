@@ -22,6 +22,11 @@ func NewUserHandler(userStore db.UserStore) *UserHandler {
 	}
 }
 
+type Loginparams struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 func (h *UserHandler) HandleGetUsers(c *fiber.Ctx) error {
 	users, err := h.userStore.GetUsers(c.Context())
 	if err != nil {

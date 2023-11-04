@@ -1,0 +1,10 @@
+@URL=http://127.0.0.1:5000
+
+GET {{URL}}/api/v1/hotel HTTP/1.1
+Authorization: Bearer your_access_token_here
+X-Api-Token: token
+
+###
+GET {{URL}}/api/v1/hotel/65392988b769142383921139/rooms HTTP/1.1
+Authorization: Bearer your_access_token_here
+X-Api-Token: token

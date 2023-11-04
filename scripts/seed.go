@@ -20,6 +20,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	client.Database(repository.DB_NAME).Drop(ctx)
 	defer func() {
 		if err = client.Disconnect(context.TODO()); err != nil {
 			panic(err)
@@ -35,15 +36,15 @@ func main() {
 	}
 	rooms := []types.Room{
 		{
-			Type:  types.SinglePersonRoomType,
+			Size:  "small",
 			Price: 99.9,
 		},
 		{
-			Type:  types.DeluxeRoomType,
+			Size:  "normal",
 			Price: 199.9,
 		},
 		{
-			Type:  types.SeaSideRoomType,
+			Size:  "king",
 			Price: 399.9,
 		},
 	}
