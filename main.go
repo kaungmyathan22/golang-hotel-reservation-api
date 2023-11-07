@@ -54,15 +54,25 @@ func main() {
 
 	fmt.Println("Pinged your deployment. You successfully connected to MongoDB!")
 
-	mongoUserStore := repository.NewMongoUserStore(client)
+	userStore := repository.NewMongoUserStore(client)
 	hotelStore := repository.NewMongoHotelStore(client)
 	roomStore := repository.NewMongoRoomStore(client, hotelStore)
-	userHandler := api.NewUserHandler(mongoUserStore)
+	bookingStore := repository.NewMongoBookingStore(client)
+
+	store := &repository.Store{
+		User:  userStore,
+		Hotel: hotelStore,
+		Room:  roomStore,
+		Book:  bookingStore,
+	}
+
+	userHandler := api.NewUserHandler(userStore)
 	hotelHandler := api.NewHotelHandle(hotelStore, roomStore)
-	authHandler := api.NewAuthHandler(mongoUserStore)
+	authHandler := api.NewAuthHandler(userStore)
+	roomHandler := api.NewRoomHandler(store)
 
 	auth := app.Group("/api")
-	apiv1 := app.Group("/api/v1", middlewares.JWTAuthentication)
+	apiv1 := app.Group("/api/v1", middlewares.JWTAuthentication(userStore))
 
 	//#region------------------- auth
 	auth.Post("/authentication/login", authHandler.HandleLogin)
@@ -79,5 +89,11 @@ func main() {
 	//#region ----- hotel routes
 	apiv1.Get("/hotel", hotelHandler.HandleGetHotels)
 	apiv1.Get("/hotel/:id/rooms", hotelHandler.HandleGetRooms)
+	apiv1.Get("/hotel/:hotelId/rooms/:roomId", hotelHandler.HandleGetRoomById)
+
+	//#region------------------- booking routes
+	apiv1.Post("/hotel/:hotelId/rooms/:roomId/book", roomHandler.HandleBookRoom)
+	apiv1.Get("/hotel/bookings", roomHandler.HandleGetBookings)
+	//#endregion
 	app.Listen(*PORT)
 }
