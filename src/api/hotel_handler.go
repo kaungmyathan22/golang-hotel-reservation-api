@@ -48,3 +48,19 @@ func (h *HotelHandler) HandleGetHotels(c *fiber.Ctx) error {
 	}
 	return c.JSON(hotels)
 }
+
+func (h *HotelHandler) HandleGetRoomById(c *fiber.Ctx) error {
+	hotelId := c.Params("hotelId")
+	roomId := c.Params("roomId")
+	hexHotelId, err := primitive.ObjectIDFromHex(hotelId)
+	hexRoomId, err := primitive.ObjectIDFromHex(roomId)
+	if err != nil {
+		return err
+	}
+	filter := bson.M{"hotelId": hexHotelId, "_id": hexRoomId}
+	rooms, err := h.roomStore.GetRooms(c.Context(), filter)
+	if err != nil {
+		return err
+	}
+	return c.JSON(rooms)
+}
