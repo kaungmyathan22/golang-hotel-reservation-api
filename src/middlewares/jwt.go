@@ -9,28 +9,36 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	customeErrors "github.com/kaungmyathan22/golang-hotel-reservation/src/errors"
+	repository "github.com/kaungmyathan22/golang-hotel-reservation/src/repositories"
 )
 
-func JWTAuthentication(c *fiber.Ctx) error {
-	auth_headers, ok := c.GetReqHeaders()["Authorization"]
-	if !ok {
-		return fmt.Errorf("unauthorized")
-	}
-	splitted_token := strings.Split(auth_headers[0],"Bearer ");
+func JWTAuthentication(userStore repository.UserStore) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		auth_headers, ok := c.GetReqHeaders()["Authorization"]
+		if !ok {
+			return fmt.Errorf("unauthorized")
+		}
+		splitted_token := strings.Split(auth_headers[0], "Bearer ")
 
-	token := splitted_token[1]
-	claims, err := parseJWTToken(token);
-	if  err != nil {
-		return err
-	}
+		token := splitted_token[1]
+		claims, err := parseJWTToken(token)
+		if err != nil {
+			return err
+		}
 
-	fmt.Println(claims)
-	expiresFloat := claims["expires"].(float64)
-	expires := int64(expiresFloat)
-	if time.Now().Unix() > expires {
-		return fmt.Errorf("token expired")
+		expiresFloat := claims["expires"].(float64)
+		expires := int64(expiresFloat)
+		if time.Now().Unix() > expires {
+			return fmt.Errorf("token expired")
+		}
+		userID := claims["userID"].(string)
+		user, err := userStore.GetUserByID(c.Context(), userID)
+		if err != nil {
+			return fmt.Errorf("unauthorized")
+		}
+		c.Context().SetUserValue("user", user)
+		return c.Next()
 	}
-	return c.Next()
 }
 
 func parseJWTToken(tokenStr string) (jwt.MapClaims, error) {
