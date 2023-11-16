@@ -70,6 +70,7 @@ func main() {
 	hotelHandler := api.NewHotelHandle(hotelStore, roomStore)
 	authHandler := api.NewAuthHandler(userStore)
 	roomHandler := api.NewRoomHandler(store)
+	bookingHandler := api.NewBookingHandler(store)
 
 	auth := app.Group("/api")
 	apiv1 := app.Group("/api/v1", middlewares.JWTAuthentication(userStore))
@@ -95,7 +96,8 @@ func main() {
 
 	//#region------------------- booking routes
 	apiv1.Post("/hotel/:hotelId/rooms/:roomId/book", roomHandler.HandleBookRoom)
-	apiv1.Get("/hotel/bookings", roomHandler.HandleGetBookings)
+	apiv1.Get("/bookings", bookingHandler.GetBookings)
+	apiv1.Get("/bookings/me", bookingHandler.GetMyBookings)
 	//#endregion
 	app.Listen(*PORT)
 }
