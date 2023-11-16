@@ -85,11 +85,13 @@ func main() {
 	apiv1.Get("/user/:id", userHandler.HandleGetUser)
 	apiv1.Patch("/user/:id", userHandler.HandleUpdateUser)
 	apiv1.Delete("/user/:id", userHandler.HandleDeleteUsers)
+	//#endregion
 
 	//#region ----- hotel routes
 	apiv1.Get("/hotel", hotelHandler.HandleGetHotels)
 	apiv1.Get("/hotel/:id/rooms", hotelHandler.HandleGetRooms)
 	apiv1.Get("/hotel/:hotelId/rooms/:roomId", hotelHandler.HandleGetRoomById)
+	//#endregion
 
 	//#region------------------- booking routes
 	apiv1.Post("/hotel/:hotelId/rooms/:roomId/book", roomHandler.HandleBookRoom)
