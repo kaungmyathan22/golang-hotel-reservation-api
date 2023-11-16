@@ -59,7 +59,9 @@ func (h *UserHandler) HandleCreateUsers(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-
+	if alreadyExistedUser, _ := h.userStore.GetUserByEmail(c.Context(), payload.Email); alreadyExistedUser != nil {
+		return fmt.Errorf("user with that email already existed.")
+	}
 	user, err := h.userStore.CreateUser(c.Context(), parsedPayload)
 	if err != nil {
 		return err
