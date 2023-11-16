@@ -30,7 +30,7 @@ func NewRoomHandler(store *repository.Store) *RoomHandler {
 
 func (roomHandler *RoomHandler) HandleGetBookings(c *fiber.Ctx) error {
 	where := bson.M{}
-	bookings, err := roomHandler.store.Book.GetBooking(c.Context(),where)
+	bookings, err := roomHandler.store.Book.GetBooking(c.Context(), where)
 	if err != nil {
 		return err
 	}
@@ -38,7 +38,12 @@ func (roomHandler *RoomHandler) HandleGetBookings(c *fiber.Ctx) error {
 }
 
 func (roomHandler *RoomHandler) HandleBookRoom(c *fiber.Ctx) error {
-	roomID, err := primitive.ObjectIDFromHex(c.Params("roomId"))
+	var params BookRoomParams
+	if err := c.BodyParser(&params); err != nil {
+		return err
+	}
+	rawRoomID := c.Params("roomId")
+	roomID, err := primitive.ObjectIDFromHex(rawRoomID)
 	if err != nil {
 		return err
 	}
@@ -53,6 +58,20 @@ func (roomHandler *RoomHandler) HandleBookRoom(c *fiber.Ctx) error {
 		return err
 	}
 	fmt.Println(payload)
+
+	if err != nil {
+		return err
+	}
+	ok, err = roomHandler.isRoomAvailableForBooking(c, roomID, params)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return c.Status(http.StatusBadRequest).JSON(map[string]string{
+			"type":    "error",
+			"message": fmt.Sprintf("room %s already booked.", rawRoomID),
+		})
+	}
 	booking := types.Booking{
 		UserID:     user.ID,
 		RoomID:     roomID,
@@ -66,4 +85,22 @@ func (roomHandler *RoomHandler) HandleBookRoom(c *fiber.Ctx) error {
 	}
 	fmt.Println(booking)
 	return c.JSON(result)
+}
+
+func (roomHandler *RoomHandler) isRoomAvailableForBooking(c *fiber.Ctx, roomID primitive.ObjectID, params BookRoomParams) (bool, error) {
+	where := bson.M{
+		"_id": roomID,
+		"fromDate": bson.M{
+			"$gte": params.FromDate,
+		},
+		"tillDate": bson.M{
+			"$lte": params.TillDate,
+		},
+	}
+	bookings, err := roomHandler.store.Book.GetBooking(c.Context(), where)
+	if err != nil {
+		return false, err
+	}
+	ok := len(bookings) > 0
+	return ok, nil
 }
