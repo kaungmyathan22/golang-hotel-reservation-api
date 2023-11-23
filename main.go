@@ -52,7 +52,7 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println("Pinged your deployment. You successfully connected to MongoDB!")
+	fmt.Println("Pinged. You successfully connected to MongoDB!")
 
 	userStore := repository.NewMongoUserStore(client)
 	hotelStore := repository.NewMongoHotelStore(client)
